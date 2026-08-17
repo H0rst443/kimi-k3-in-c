@@ -1,0 +1,46 @@
+services:
+  k3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: kimi-k3-in-c:local
+    init: true
+    restart: "no"
+    environment:
+      HF_TOKEN: ${HF_TOKEN:-}
+      OMP_NUM_THREADS: ${OMP_NUM_THREADS:?Set OMP_NUM_THREADS in the Portainer stack environment}
+      K3_MODEL_DIR: /models/checkpoint
+      K3_TRUNK_DIR: /models/trunk
+      K3_TOKENIZER_DIR: /models/checkpoint
+      K3_PRESET: laptop
+      K3_GEN: ${K3_GEN:-8}
+      K3_INCREMENTAL: ${K3_INCREMENTAL:-1}
+      K3_PROMPT: ${K3_PROMPT:-}
+      K3_PROMPT_FILE: ${K3_PROMPT_FILE:-}
+      K3_IDS: ${K3_IDS:-}
+      K3_OUT: /output/k3_run.json
+    volumes:
+      - type: bind
+        source: /mnt/nvme/k3model
+        target: /models/checkpoint
+        read_only: true
+        bind:
+          propagation: rprivate
+      - type: bind
+        source: /mnt/nvme/k3trunk
+        target: /models/trunk
+        read_only: true
+        bind:
+          propagation: rprivate
+      - type: volume
+        source: k3-output
+        target: /output
+    ulimits:
+      nofile:
+        soft: 1048576
+        hard: 1048576
+    mem_limit: 12g
+    memswap_limit: 12g
+
+volumes:
+  k3-output:
