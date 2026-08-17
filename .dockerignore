@@ -1,0 +1,13 @@
+.git
+.github
+build
+bin
+__pycache__
+*.pyc
+k3model
+k3trunk
+model
+models
+weights
+checkpoint
+checkpoints
